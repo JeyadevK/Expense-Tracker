@@ -5,17 +5,61 @@ from database import get_db_session
 from models import Expense, Budget
 
 def add_expense(args):
-    session = get_db_session()
-    expense = Expense(
-        amount=args.amount,
-        category=args.category,
-        date=datetime.strptime(args.date, "%Y-%m-%d").date(),
-        description=args.description
-    )
-    session.add(expense)
-    session.commit()
-    check_budget_alert(args.category, args.amount, args.date)
-    print("Expense added successfully")
+    """Records a new expense with validation checks.
+    
+    Args:
+        args: Should contain:
+            - amount (float): Positive number
+            - category (str): Non-empty string
+            - date (str): Valid date in YYYY-MM-DD format
+            - description (str): Optional details
+    
+    Raises:
+        ValueError: For invalid inputs
+        Exception: For database errors
+    """
+    try:
+        # --- Validation Checks ---
+        # 1. Validate amount
+        if not isinstance(args.amount, (int, float)) or args.amount <= 0:
+            raise ValueError("Amount must be a positive number")
+        
+        # 2. Validate category
+        if not args.category or not args.category.strip():
+            raise ValueError("Category cannot be empty")
+            
+        # 3. Validate date format
+        try:
+            expense_date = datetime.strptime(args.date, "%Y-%m-%d").date()
+            if expense_date > datetime.now().date():
+                raise ValueError("Date cannot be in the future")
+        except ValueError as e:
+            raise ValueError(f"Invalid date format. Use YYYY-MM-DD: {e}")
+        
+        # --- Database Operation ---
+        session = get_db_session()
+        expense = Expense(
+            amount=args.amount,
+            category=args.category.strip(),
+            date=expense_date,
+            description=args.description.strip() if args.description else None
+        )
+        
+        session.add(expense)
+        session.commit()
+        
+        # --- Budget Check ---
+        check_budget_alert(args.category, args.amount, args.date)
+        
+        print("Expense added successfully")
+        
+    except ValueError as ve:
+        print(f"Validation Error: {ve}")
+        raise
+    except Exception as e:
+        session.rollback()
+        print(f"Database Error: Failed to add expense - {e}")
+        raise
 
 def set_budget(args):
     session = get_db_session()
