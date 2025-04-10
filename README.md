@@ -23,24 +23,24 @@
 
 
 
-**Usage
+#**Usage
 Basic Commands**
 
-# Add an expense
+## Add an expense
 docker compose run --rm expense-tracker add-expense \
   --amount 15.50 \
   --category Food \
   --date 2025-04-10 \
   --description "Lunch"
 
-# Set monthly budget
+## Set monthly budget
 docker compose run --rm expense-tracker set-budget \
   --category Food \
   --month 4 \
   --year 2025 \
   --amount 500
 
-# Generate monthly report
+## Generate monthly report
 docker compose run --rm expense-tracker generate-report
 
 
@@ -69,11 +69,11 @@ Test 3: Edge Cases
 
     Generate report with no expenses
 
-**Technical Implementation**
+#**Technical Implementation**
 
 Database Schema
 
-# models.py
+## models.py
 class Expense(Base):
     __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True)
@@ -91,7 +91,7 @@ class Budget(Base):
 
 Docker Configuration
 
-# docker-compose.yml
+## docker-compose.yml
 services:
   expense-tracker:
     build: .
@@ -99,7 +99,7 @@ services:
       - ./expenses.db:/app/expenses.db
 
 
-## Troubleshooting
+# Troubleshooting
 
  "Docker not found"  
    - Install Docker Desktop and restart the terminal  
@@ -107,3 +107,15 @@ services:
  "401 Unauthorized" when building  
    - Run `docker login` first  
 
+
+# Validation 
+
+##  Test Cases
+
+### Test 1: Budget Alert System
+```bash
+### Set budget
+docker compose run --rm expense-tracker set-budget --category Food --month 4 --year 2025 --amount 500
+
+### Trigger alert
+docker compose run --rm expense-tracker add-expense --amount 600 --category Food --date 2025-04-10
