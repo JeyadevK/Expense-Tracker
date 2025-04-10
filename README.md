@@ -101,9 +101,9 @@ services:
 
 ## Troubleshooting
 
-❌ "Docker not found"  
+ "Docker not found"  
    - Install Docker Desktop and restart the terminal  
 
-❌ "401 Unauthorized" when building  
+ "401 Unauthorized" when building  
    - Run `docker login` first  
 
