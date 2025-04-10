@@ -99,4 +99,11 @@ services:
       - ./expenses.db:/app/expenses.db
 
 
+## Troubleshooting
+
+❌ "Docker not found"  
+   - Install Docker Desktop and restart the terminal  
+
+❌ "401 Unauthorized" when building  
+   - Run `docker login` first  
 
